@@ -13,7 +13,7 @@ This is a web-based AI assistant powered by Google's Generative AI, designed to 
 
 1. Clone the repository:
    ```sh
-   git clone <repository-url>
+   git clone https://github.com/anonymous-basenji/data-ai-assistant-ultra.git
    ```
 2. Navigate to the project directory:
    ```sh
@@ -23,7 +23,7 @@ This is a web-based AI assistant powered by Google's Generative AI, designed to 
    ```sh
    npm install
    ```
-4. Create a `.env` file in the root directory and add your Google AI API key:
+4. Create a `.env` file in the root directory and add your Google AI API key (get it here, it's free: https://aistudio.google.com/app/apikey):
    ```
    API_KEY=your_api_key_here
    ```
