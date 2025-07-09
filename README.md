@@ -47,11 +47,6 @@ This is a web-based AI assistant powered by Google's Generative AI, designed to 
 - `npm run lint`: Lints the codebase using ESLint.
 - `npm run preview`: Serves the production build locally.
 
-## NOTE
-You will also need to run the backend server, located at src/server.js separately, and you can do this by running this command from the project directory:
-```sh
-node src/server.js
-```
 
 ## Key Dependencies
 
