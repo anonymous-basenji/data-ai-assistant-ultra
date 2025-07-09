@@ -49,7 +49,9 @@ This is a web-based AI assistant powered by Google's Generative AI, designed to 
 
 ## NOTE
 You will also need to run the backend server, located at src/server.js separately, and you can do this by running this command from the project directory:
-`node src/server.js`
+```sh
+   node src/server.js
+```
 
 ## Key Dependencies
 
