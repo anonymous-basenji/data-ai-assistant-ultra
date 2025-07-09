@@ -107,6 +107,9 @@ function App() {
         <input name='chat-input' className='chat-input' type='text' placeholder='Chat with Data' value={inputValue} onChange={(e) => updateInputValue(e.target.value)}></input>
         <button className='submit-btn' type='submit'>Send</button>
       </form>
+      <div className='disclaimer'>
+        <p><strong>Chats are not private. Do not enter personal information.</strong></p>
+      </div>
     </div>
   );
 }
