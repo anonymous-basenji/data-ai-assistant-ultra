@@ -1,0 +1,26 @@
+.model {
+    align-self: flex-start;
+    text-align: left;
+    border: none;
+    height: auto;
+    color: white;
+    width: 40vw;
+    padding: 5px 8px 5px 8px;
+    margin: 10px; 
+    font-size: 20px;
+    
+}
+
+.user {
+    align-self: flex-end;
+    text-align: left;
+    border: none;
+    border-radius: 10px;
+    height: auto;
+    background-color: #484848;
+    color: white;
+    width: 30vw auto;
+    padding: 0 8px 0 8px;
+    margin: 10px;
+    font-size: 20px;
+}
