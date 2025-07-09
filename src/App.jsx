@@ -111,6 +111,7 @@ function App() {
       <div className='disclaimer'>
         <p><strong>Chats are not private. Do not enter private/confidential information.</strong></p>
       </div>
+      <Analytics />
     </div>
   );
 }
