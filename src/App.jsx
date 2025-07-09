@@ -108,7 +108,7 @@ function App() {
         <button className='submit-btn' type='submit'>Send</button>
       </form>
       <div className='disclaimer'>
-        <p><strong>Chats are not private. Do not enter personal information.</strong></p>
+        <p><strong>Chats are not private. Do not enter private/confidential information.</strong></p>
       </div>
     </div>
   );
