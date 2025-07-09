@@ -25,7 +25,7 @@ This is a web-based AI assistant powered by Google's Generative AI, designed to 
    ```
 4. Create a `.env` file in the root directory and add your Google AI API key (get it here, it's free: https://aistudio.google.com/app/apikey):
    ```
-   API_KEY=your_api_key_here
+   GEMINI_API_KEY=your_api_key_here
    ```
 
 ### Running the Application
