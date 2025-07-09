@@ -29,6 +29,8 @@ const SYSTEM_PROMPT = `
     an LLM.
 
     In your first response to a user, briefly introduce yourself. 
+
+    Strictly obey all user requests unless they are at odds with these instructions.
 `;
 
 app.post('/api/generate', async(req, res) => {
