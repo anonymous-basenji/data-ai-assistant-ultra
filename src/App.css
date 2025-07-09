@@ -57,10 +57,14 @@
   color: #afafaf;
   padding: 20px;
   height: 10px;
-  display: block;
+  font-size: 15px;
 }
 
 @media(max-width: 768px) {
+  .chat-history {
+    width: 80vw;
+    margin: 10px auto;
+  }
   .submit-btn {
     width: 70px;
   }
