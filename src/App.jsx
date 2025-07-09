@@ -1,4 +1,4 @@
-import { Analytics } from "@vercel/analytics/next" // Vercel Analytics
+import { Analytics } from "@vercel/analytics/react" // Vercel Analytics
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import ChatBubble from './ChatBubble';
