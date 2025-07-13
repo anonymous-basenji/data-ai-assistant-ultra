@@ -2,7 +2,7 @@ import { Analytics } from "@vercel/analytics/react" // Vercel Analytics
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import ChatBubble from './ChatBubble';
-import { GoogleGenAI } from '@google/genai';
+import GoogleSignInButton from "./GoogleSignInButton";
 
 function App() {
   const [inputValue, updateInputValue] = useState('');
@@ -96,22 +96,28 @@ function App() {
   }
 
   return (
-    <div>
-      <div className='chat-history' ref={chatHistoryRef}>
-        {
-          chatHistory.map(chatBubble => (
-            <ChatBubble key={chatBubble.id} role={chatBubble.role} message={chatBubble.parts[0].text}/>
-          ))
-        }
+    <div className='app-container'>
+      <div className='top-bar'>
+        <GoogleSignInButton className='sign-in-btn'/>
       </div>
-      <form className='submit-form' onSubmit={handleSubmit}>
-        <input name='chat-input' className='chat-input' type='text' placeholder='Chat with Data' value={inputValue} onChange={(e) => updateInputValue(e.target.value)}></input>
-        <button className='submit-btn' type='submit'>Send</button>
-      </form>
-      <div className='disclaimer'>
-        <p><strong>Chats are not private. Do not enter private/confidential information.</strong></p>
+      <div className='main-content'>
+        <div className='chat-history' ref={chatHistoryRef}>
+          {
+            chatHistory.map(chatBubble => (
+              <ChatBubble key={chatBubble.id} role={chatBubble.role} message={chatBubble.parts[0].text}/>
+            ))
+          }
+        </div>
+        <form className='submit-form' onSubmit={handleSubmit}>
+          <input name='chat-input' className='chat-input' type='text' placeholder='Chat with Data' value={inputValue} onChange={(e) => updateInputValue(e.target.value)}></input>
+          <button className='submit-btn' type='submit'>Send</button>
+        </form>
+        <div className='disclaimer'>
+          <p><strong>Chats are not private. Do not enter private/confidential information.</strong></p>
+        </div>
+        <Analytics />
       </div>
-      <Analytics />
+      
     </div>
   );
 }
