@@ -98,6 +98,7 @@ function App() {
   return (
     <div className='app-container'>
       <div className='top-bar'>
+        <p className='app-title'><strong>Data AI</strong></p>
         <GoogleSignInButton className='sign-in-btn'/>
       </div>
       <div className='main-content'>
