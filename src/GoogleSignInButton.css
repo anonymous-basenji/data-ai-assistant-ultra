@@ -1,0 +1,9 @@
+button {
+    border: none;
+    margin-left: auto;
+    border-radius: 20px;
+    background-color: #363636;
+    padding: 10px;
+    min-height: 40px;
+    background: linear-gradient(45deg, #130287, #1a05d6);
+}
