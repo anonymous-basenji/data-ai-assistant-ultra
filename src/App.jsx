@@ -23,7 +23,6 @@ function App() {
     try {
       const result = await signInWithPopup(auth, provider);
       setUser(result.user);
-      console.log('Successfully signed in with Google!', result.user);
     } catch(e) {
       const errorCode = error.code;
       const errorMessage = error.message;
