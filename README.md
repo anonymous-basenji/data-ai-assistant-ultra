@@ -2,6 +2,8 @@
 
 This is a web-based AI assistant powered by Google's Generative AI, designed to emulate the character and behavior of Lt. Cmdr. Data from Star Trek: The Next Generation.
 
+See final product here: https://data-ai-assistant-ultra.vercel.app/
+
 ## Getting Started
 
 ### Prerequisites
