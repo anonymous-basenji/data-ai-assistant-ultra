@@ -18,14 +18,37 @@
   width: 100%;
   display: flex;
   padding: 10px;
+  align-items: center;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: row;
+  background-color: blue;
+  border-radius: 30px;
+  height: 60px;
+}
+
+.account-button {
+  border-radius: 30px;
+}
+
+.account-info p {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.account-info img {
+  border-radius: 30px;
+  margin-right: 5px;
 }
 
 .app-title {
   color: white;
   font-size: 30px;
-  padding: 2px;
   margin: 0;
   margin-right: auto;
+  padding: 10px;
 }
 
 .chat-history {
@@ -76,6 +99,14 @@
   cursor: pointer;
 }
 
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
 .disclaimer {
   color: #afafaf;
   padding: 20px;
@@ -90,5 +121,8 @@
   }
   .submit-btn {
     width: 70px;
+  }
+  .account-info p {
+    display: none;
   }
 }

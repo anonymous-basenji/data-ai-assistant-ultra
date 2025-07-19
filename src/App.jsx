@@ -1,10 +1,14 @@
 import { Analytics } from "@vercel/analytics/react" // Vercel Analytics
 import { useState, useEffect, useRef } from 'react';
+import { auth, provider, db } from './firebase';
+import { signInWithPopup, getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import './App.css';
 import ChatBubble from './ChatBubble';
 import GoogleSignInButton from "./GoogleSignInButton";
 
 function App() {
+  const [user, setUser] = useState(null);
   const [inputValue, updateInputValue] = useState('');
   const [chatHistory, updateChatHistory] = useState([]);
   const [isLoading, setLoadingStatus] = useState(false);
@@ -13,6 +17,42 @@ function App() {
 
   const streamingMessageRef = useRef('');
   const chatHistoryRef = useRef(null);
+
+
+  const handleSignIn = async() => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      setUser(result.user);
+      console.log('Successfully signed in with Google!', result.user);
+    } catch(e) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.customData?.email;
+      console.error('Google Sign-In Error:', errorCode, errorMessage, email);
+    }
+  };
+
+  const handleSignOut = async() => {
+    const auth = getAuth();
+    signOut(auth).catch((error) => {
+      console.error("Sign out error:", error);
+      setError("Failed to sign out.");
+    })
+    console.log("Succesfully signed out user");
+    console.log("Current user:", user);
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if(!currentUser) { // if currentUser null (user logged out)
+        setUser(currentUser);
+        updateChatHistory([]);
+      }
+      
+    });
+
+    return () => unsubscribe();
+  }, [user]);
 
   const streamResponse = async() => {
     if(!lastPrompt || isLoading) return;
@@ -27,7 +67,7 @@ function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ history: chatHistory })
-      })
+      });
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
@@ -99,26 +139,42 @@ function App() {
     <div className='app-container'>
       <div className='top-bar'>
         <p className='app-title'><strong>Data AI</strong></p>
-        <GoogleSignInButton className='sign-in-btn'/>
+        {user ? (
+          <div className='account-info'>
+            <img src={user.photoURL}></img>
+            <p>{user.displayName}</p>
+            <button className='account-button' onClick={handleSignOut}>Sign out</button>
+          </div>
+        ) : (
+          <button className='account-button' onClick={handleSignIn}>Sign in with Google</button>
+        )}
       </div>
-      <div className='main-content'>
-        <div className='chat-history' ref={chatHistoryRef}>
-          {
-            chatHistory.map(chatBubble => (
-              <ChatBubble key={chatBubble.id} role={chatBubble.role} message={chatBubble.parts[0].text}/>
-            ))
-          }
+      {user ? (
+        <div className='main-content'>
+          <div className='chat-history' ref={chatHistoryRef}>
+            {
+              chatHistory.map(chatBubble => (
+                <ChatBubble key={chatBubble.id} role={chatBubble.role} message={chatBubble.parts[0].text}/>
+              ))
+            }
+          </div>
+          <form className='submit-form' onSubmit={handleSubmit}>
+            <input name='chat-input' className='chat-input' type='text' placeholder='Chat with Data' value={inputValue} onChange={(e) => updateInputValue(e.target.value)}></input>
+            <button className='submit-btn' type='submit'>Send</button>
+          </form>
+          <div className='disclaimer'>
+            <p><strong>Chats are not private. Do not enter private/confidential information.</strong></p>
+          </div>
         </div>
-        <form className='submit-form' onSubmit={handleSubmit}>
-          <input name='chat-input' className='chat-input' type='text' placeholder='Chat with Data' value={inputValue} onChange={(e) => updateInputValue(e.target.value)}></input>
-          <button className='submit-btn' type='submit'>Send</button>
-        </form>
-        <div className='disclaimer'>
-          <p><strong>Chats are not private. Do not enter private/confidential information.</strong></p>
+      ) : (
+        <div className='welcome-screen'>
+          <h1>Data AI</h1>
+          <h3>Asking the deep questions about humanity.</h3>
+          <p>Sign in to start chatting.</p>
         </div>
-        <Analytics />
-      </div>
+      )}
       
+      <Analytics />
     </div>
   );
 }
