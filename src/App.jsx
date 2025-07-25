@@ -2,9 +2,10 @@ import { Analytics } from "@vercel/analytics/react" // Vercel Analytics
 import { useState, useEffect, useRef } from 'react';
 import { auth, provider, db } from './firebase';
 import { signInWithPopup, getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import './App.css';
 import ChatBubble from './ChatBubble';
+import SideMenu from './SideMenu';
 import GoogleSignInButton from "./GoogleSignInButton";
 
 function App() {
@@ -134,8 +135,25 @@ function App() {
     }
   }
 
+  const saveChatToHistory = async(userId) => {
+    const currChat = chatHistory;
+
+    // TODO: Figure out how to stop same chat from being added multiple times - maybe only run this function for first message?
+    // and have another function that updates?
+    try {
+      const docRef = await addDoc(collection(db, userId, 'chats'), {
+        title: "Test title",
+        messages: chatHistory,
+        timestamp: serverTimestamp()
+      })
+    } catch(e) {
+      console.error('Error saving chat:', error);
+    }
+  }
+
   return (
     <div className='app-container'>
+      <SideMenu/>
       <div className='top-bar'>
         <p className='app-title'><strong>Data AI</strong></p>
         {user ? (
