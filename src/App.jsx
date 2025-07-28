@@ -2,7 +2,7 @@ import { Analytics } from "@vercel/analytics/react" // Vercel Analytics
 import { useState, useEffect, useRef } from 'react';
 import { auth, provider, db } from './firebase';
 import { signInWithPopup, getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
-import { doc, onSnapshot, setDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import './App.css';
 import ChatBubble from './ChatBubble';
 import SideMenu from './SideMenu';
@@ -15,6 +15,7 @@ function App() {
   const [isLoading, setLoadingStatus] = useState(false);
   const [error, setError] = useState('');
   const [lastPrompt, setLastPrompt] = useState(null);
+  const [activeChatId, setActiveChatId] = useState(null);
 
   const streamingMessageRef = useRef('');
   const chatHistoryRef = useRef(null);
@@ -132,29 +133,35 @@ function App() {
       updateChatHistory([...chatHistory, userMessage]);
       setLastPrompt(userMessage);
       updateInputValue('');
+
+      saveOrUpdateChat(chatHistory);
     }
   }
 
-  const saveChatToHistory = async(userId) => {
-    const currChat = chatHistory;
-
-    // TODO: Figure out how to stop same chat from being added multiple times - maybe only run this function for first message?
-    // and have another function that updates?
-    try {
-      const docRef = await addDoc(collection(db, userId, 'chats'), {
-        title: "Test title",
-        messages: chatHistory,
-        timestamp: serverTimestamp()
+  const saveOrUpdateChat = (messages) => {
+    if(!activeChatId) {
+      const currDoc = addDoc(collection(db, 'users', auth.currentUser.uid, 'chats'), {
+        title: 'Sample title',
+        messages: messages,
+        timestamp: Date.now()
+      });
+      setActiveChatId(currDoc.id);
+    } else {
+      updateDoc(doc(db, 'users', auth.currentUser.uid, 'chats', activeChatId), {
+        messages: messages
       })
-    } catch(e) {
-      console.error('Error saving chat:', error);
     }
+  }
+
+  const loadChat = (chat) => {
+    updateChatHistory(chat.messages);
+    setActiveChatId(chat.id);
   }
 
   return (
     <div className='app-container'>
-      <SideMenu/>
       <div className='top-bar'>
+        <SideMenu onSelectChat={loadChat}/>
         <p className='app-title'><strong>Data AI</strong></p>
         {user ? (
           <div className='account-info'>
@@ -187,7 +194,7 @@ function App() {
         <div className='welcome-screen'>
           <h1>Data AI</h1>
           <h3>Asking the deep questions about humanity.</h3>
-          <p>Sign in to start chatting.</p>
+          <button className='main-sign-in-btn' onClick={handleSignIn}>Sign in to start chatting</button>
         </div>
       )}
       

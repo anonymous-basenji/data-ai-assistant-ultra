@@ -1,0 +1,38 @@
+.hamburger-btn {
+    z-index: 1001; /* Make sure it stays on top of everything else */
+    background-color: transparent;
+    color: none;
+}
+
+.side-menu {
+    position: fixed;
+    transform: translateX(-120%);
+    width: 20%;
+    transition: transform 0.3s ease-in-out;
+    background: linear-gradient(45deg, #130287, #1a05d6);
+    height: auto;
+    z-index: 1000;
+    border-radius: 20px;
+    margin: 20px;
+    padding: 10px;
+}
+
+.side-menu.open {
+    transform: translateX(0);
+}
+
+.delete-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+}
+
+.side-menu li:hover .delete-btn {
+    opacity: 1;
+}
+
+@media(max-width: 768px) {
+    .side-menu {
+        width: 70%;
+    }
+}

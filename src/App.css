@@ -107,6 +107,10 @@
   height: 70vh;
 }
 
+.main-sign-in-btn {
+  margin: 30px auto;
+}
+
 .disclaimer {
   color: #afafaf;
   padding: 20px;
