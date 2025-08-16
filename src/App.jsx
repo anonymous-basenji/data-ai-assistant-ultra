@@ -19,6 +19,7 @@ function App() {
 
   const streamingMessageRef = useRef('');
   const chatHistoryRef = useRef(null);
+  const submitBtnRef = useRef(null);
 
 
   const handleSignIn = async() => {
@@ -68,6 +69,7 @@ function App() {
 
       if(!user) {
         setLoadingStatus(false);
+        setError("You must be signed in to send messages.");
         return; // stop function execution if user not logged in
       }
 
@@ -79,6 +81,10 @@ function App() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
+
+      if(chatHistoryRef.current) {
+        chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+      }
 
       while(true) {
         const { value, done } = await reader.read();
@@ -108,11 +114,10 @@ function App() {
               }];
             }
           })
-          if(chatHistoryRef.current) {
-            chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
-          }
+          submitBtnRef.current.textContent = '...';
         }
       }
+      submitBtnRef.current.textContent = 'Send';
     } catch(e) {
       console.error('Error:', e);
       setError('Something went wrong.');
@@ -141,24 +146,24 @@ function App() {
       setLastPrompt(userMessage);
       updateInputValue('');
 
-      saveOrUpdateChat(chatHistory);
+      // saveOrUpdateChat(chatHistory);
     }
   }
 
-  const saveOrUpdateChat = (messages) => {
-    if(!activeChatId) {
-      const currDoc = addDoc(collection(db, 'users', auth.currentUser.uid, 'chats'), {
-        title: 'Sample title',
-        messages: messages,
-        timestamp: Date.now()
-      });
-      setActiveChatId(currDoc.id);
-    } else {
-      updateDoc(doc(db, 'users', auth.currentUser.uid, 'chats', activeChatId), {
-        messages: messages
-      })
-    }
-  }
+  // const saveOrUpdateChat = (messages) => {
+  //   if(!activeChatId) {
+  //     const currDoc = addDoc(collection(db, 'users', auth.currentUser.uid, 'chats'), {
+  //       title: 'Sample title',
+  //       messages: messages,
+  //       timestamp: Date.now()
+  //     });
+  //     setActiveChatId(currDoc.id);
+  //   } else {
+  //     updateDoc(doc(db, 'users', auth.currentUser.uid, 'chats', activeChatId), {
+  //       messages: messages
+  //     })
+  //   }
+  // }
 
   const loadChat = (chat) => {
     updateChatHistory(chat.messages);
@@ -197,7 +202,7 @@ function App() {
           </div>
           <form className='submit-form' onSubmit={handleSubmit}>
             <input name='chat-input' className='chat-input' type='text' placeholder='Chat with Data' value={inputValue} onChange={(e) => updateInputValue(e.target.value)}></input>
-            <button className='submit-btn' type='submit'>Send</button>
+            <button className='submit-btn' type='submit' ref={submitBtnRef}>Send</button>
           </form>
           <div className='disclaimer'>
             <p><strong>Chats are not private. Do not enter private/confidential information.</strong></p>

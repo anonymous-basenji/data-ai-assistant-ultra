@@ -2,12 +2,22 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 dotenv.config();
 
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+
+if(!getApps().length) {
+    initializeApp({
+        credential: cert(serviceAccount)
+    });
+}
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -34,9 +44,19 @@ const SYSTEM_PROMPT = `
 `;
 
 app.post('/api/generate', async(req, res) => {
-    const { history } = req.body;
-
     try {
+        const authHeader = req.headers.authorization;
+        const idToken = authHeader?.split('Bearer ')[1];
+
+        if(!idToken) {
+            return res.status(401).send('Authentication token not found.');
+        }
+
+        const decodedToken = await getAuth().verifyIdToken(idToken);
+
+
+        const { history } = req.body;
+
         const chat = await genAI.chats.create({
             model: 'gemini-2.5-flash',
             history: history.slice(0, -1),
@@ -48,6 +68,8 @@ app.post('/api/generate', async(req, res) => {
             }
             
         });
+
+        
 
         const lastUserMessage = history[history.length - 1].parts[0].text;
         const stream = await chat.sendMessageStream({ message: lastUserMessage });
@@ -62,8 +84,12 @@ app.post('/api/generate', async(req, res) => {
 
         res.end();
     } catch(e) {
+        if(e.code?.startsWith('auth/')) {
+            res.status(403).send('Invalid or expired authentication token.');
+        } else {
+            res.status(500).json({ error: 'Something went wrong on the server.' });
+        }
         console.error(e);
-        res.status(500).json({ error: 'Something went wrong on the server.' });
     }
 });
 

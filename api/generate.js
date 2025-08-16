@@ -1,7 +1,18 @@
 // This is a vercel function
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
+import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 dotenv.config();
+
+// Prepare service account credentials
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+
+if(!getApps().length) {
+    initializeApp({
+        credential: cert(serviceAccount)
+    });
+}
 
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -34,6 +45,19 @@ export default async function handler(req, res) {
     }
 
     try {
+        // Check auth header
+        const authHeader = req.headers.authorization;
+        // Get token from header
+        const idToken = authHeader?.split('Bearer ')[1];
+
+        if(!idToken) {
+            return res.status(401).send('Authentication token not found.');
+        }
+
+        // Verify id token using admin sdk
+        const decodedToken = await getAuth().verifyIdToken(idToken);
+
+
         const { history } = req.body;
         const chat = await genAI.chats.create({
             model: 'gemini-2.5-flash',
@@ -62,5 +86,11 @@ export default async function handler(req, res) {
     } catch(e) {
         console.error(e);
         res.status(500).json({ error: 'Something went wrong on the server.' });
+
+        if(e.code.startsWith('auth/')) {
+            res.status(403).send('Invalid or expired authentication token.');
+        } else {
+            res.status(500).json({error: 'Something went wrong on the server.'});
+        }
     }
 }

@@ -25,6 +25,10 @@ dist-ssr
 
 # Environment variables
 .env
+data-ai-assistant-project-firebase-adminsdk-fbsvc-7ab25ed04e.json
 
 # Misc
 SECURITY_TUTORIAL.md
+
+# Gemini local configuration
+GEMINI.md
