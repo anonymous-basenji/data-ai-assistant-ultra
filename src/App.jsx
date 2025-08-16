@@ -64,9 +64,16 @@ function App() {
     streamingMessageRef.current = '';
 
     try {
+      const uidToken = user ? await user.getIdToken() : null;
+
+      if(!user) {
+        setLoadingStatus(false);
+        return; // stop function execution if user not logged in
+      }
+
       const response = await fetch(import.meta.env.DEV ? 'http://localhost:3001/api/generate' : '/api/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization' : `Bearer ${uidToken}` },
         body: JSON.stringify({ history: chatHistory })
       });
 
@@ -158,11 +165,17 @@ function App() {
     setActiveChatId(chat.id);
   }
 
+  const startNewChat = () => {
+    updateChatHistory([]);
+    setActiveChatId(null);
+  }
+
   return (
     <div className='app-container'>
       <div className='top-bar'>
         <SideMenu onSelectChat={loadChat}/>
         <p className='app-title'><strong>Data AI</strong></p>
+        <button className='new-chat-btn' onClick={startNewChat}>New Chat</button>
         {user ? (
           <div className='account-info'>
             <img src={user.photoURL}></img>
